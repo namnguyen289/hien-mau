@@ -8,8 +8,12 @@
     	max-width: 50%;
     	min-width: 50%;
 		img{
-			width:100%;
     		border-radius: 50%;
+			height: 152px;
+			width: 152px;
 		}
+	}
+	.clearBG .item-inner{
+		background-image: none;
 	}
 }
