@@ -1,9 +1,23 @@
-<ion-menu [content]="content">
 
+
+<ion-menu id="mainMenu" [content]="content">
+ <ion-list *ngIf="hasLogined">      
+      <div block class="avatar"><img *ngIf="authData && authData.auth.photoURL != 'MISSING'" src="{{authData.auth.photoURL}}"></div>
+      <button ion-item menuClose *ngFor="let p of loggedOutPages" (click)="openPage(p)">
+        <ion-icon item-left [name]="p.icon"></ion-icon>
+        {{p.title}}
+      </button>
+      <button menuClose (click)="logOut()">
+        LogOut
+      </button>
+    </ion-list>
+     <ion-list *ngIf="!hasLogined">
+       <button ion-item menuClose block (click)="loginWithSocial(authProvider.Facebook, $event)">Connect with Facebook</button>
+       <button ion-item menuClose block (click)="loginWithSocial(authProvider.Google, $event)">Connect with Google</button>
+    </ion-list>
   <ion-toolbar>
     <ion-title>Pages</ion-title>
   </ion-toolbar>
-
   <ion-content>
     <ion-list>
       <button ion-item *ngFor="let p of pages" (click)="openPage(p)">
