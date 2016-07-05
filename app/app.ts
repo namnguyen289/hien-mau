@@ -4,6 +4,8 @@ import {StatusBar} from 'ionic-native';
 import {UserData} from './services/user-data';
 import {LoginPage} from './pages/auth/login/login';
 import {HomePage} from './pages/home/home';
+import {ListPage} from './pages/list/list';
+import {AccountPage} from './pages/auth/account/account';
 // import {ListPage} from './pages/list/list';
 import {
     FIREBASE_PROVIDERS, defaultFirebase,
@@ -51,7 +53,8 @@ class MyApp {
 
     // set our app's pages
     this.pages = [
-      { title: 'Hello Ionic', component: HomePage }
+      { title: 'Hello Ionic', component: HomePage },
+      { title: ' List page', component: ListPage}
     ];
   }
 
@@ -75,6 +78,11 @@ class MyApp {
     this.menu.close();
     // navigate to the new page if it is not the current page
     this.nav.setRoot(page.component);
+  }
+
+  account(_event){
+    _event.preventDefault();
+    this.nav.push(AccountPage,this.authData);
   }
 
   logOut(){
@@ -109,7 +117,7 @@ class MyApp {
     // this.authData = this.userData.authData;
     this.userData.getAuthData().then((value)=>{
       this.authData = JSON.parse(value);
-      console.log(this.authData);
+      // console.log(this.authData);
       this.nav.setRoot(HomePage);
     });
   }

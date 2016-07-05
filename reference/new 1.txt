@@ -1,0 +1,52 @@
+Parameters in Blogspot feed
+ This post presented for me to understanding the "Query Parameters in Blogspot Feed". As we know, the URL to get feed items of our blog is http://yourblogname.blogspot.com/feeds/posts/default. You can review this feed after as my blog feed : http://isitdull.blogspot.com/feeds/posts/default or you can use your own blog to experiment.
+There are two options how to using your blogger's feed
+Using your blogger's address : http://yourblogname.blogspot.com/feed/post/default
+Using your blogid : http://www.blogger.com/feeds/blogID/posts/default
+The Blogger Data API supports the following query parameter:
+alt
+Meaning - Alternative representation type
+We can use one of the folowing values :
+If wedon't specify an alt parameter, the service returns an Atom feed. This is equivalent to alt=atom
+alt=rss returns an RSS 2.0 result feed (for reads only)
+alt=json returns a JSON representation of the feed
+alt=json-in-script Requests a response that wraps JSON in a script tag
+alt=atom-in-script Requests an Atom response that wraps an XML string in a script tag.
+alt=rss-in-script Requests an RSS response that wraps an XML string in a script tag.
+alt=atom-service Requests an Atom service document that describes the feed.
+For example :  
+http://isitdull.blogspot.com/feeds/posts/default?alt=json or  
+http://www.blogger.com/feeds/1862344473010958336/posts/default?alt=json
+This will returns type of feed as a JSON.
+/category
+Meaning - Category query filter
+Specifies categories (also known as labels) to filter the feed results.
+For example,  
+http://isitdull.blogspot.com/feeds/posts/default/-/blogging or  
+http://www.blogger.com/feeds/1862344473010958336/posts/default/-/blogging
+This will returns entries with the label or category of blogging.
+max-results
+Meaning - The Maximum number of results to be retrieved  
+http://isitdull.blogspot.com/feeds/posts/default?max-results=2 or  
+http://www.blogger.com/feeds/1862344473010958336/posts/default?max-results=2
+This will returns entries with 2 results.
+orderby
+Meaning - The order in which to return entries, such as lastmodified (the default), starttime, or updated.  
+http://isitdull.blogspot.com/feeds/posts/default?orderby=updated or  
+http://www.blogger.com/feeds/1862344473010958336/posts/default?orderby=updated
+I do not know how to using lastmodified and starttime!
+published-min, published-max
+Meaning  - The bounds on entry publication dates  
+http://isitdull.blogspot.com/feeds/posts/default?published-min=2010-11-01T00:00:00&published-max=2011-11-30T23:59:59&orderby=updated or  
+http://www.blogger.com/feeds/1862344473010958336/posts/default?published-min=2010-11-01T00:00:00&published-max=2011-11-30T23:59:59&orderby=updated
+start-index
+Meaning - The 1-based index of the first result to be retrieved
+http://isitdull.blogspot.com/feeds/posts/default?start-index=1 or
+http://www.blogger.com/feeds/1862344473010958336/posts/default?start-index=1
+Test by yourself, you can change number on start-index=1
+updated-min, updated-max
+Meaning  - The bounds on entry update dates.
+These query parameters are ignored unless the orderby parameter is set to updated  
+http://isitdull.blogspot.com/feeds/posts/default?updated-min=2010-11-01T00:00:00&updated-max=2011-11-30T23:59:59&orderby=updated or  
+http://www.blogger.com/feeds/1862344473010958336/posts/default?updated-min=2010-11-01T00:00:00&updated-max=2011-11-30T23:59:59&orderby=updated
+Test by yourself again :D

@@ -8,9 +8,7 @@
 <ion-content>
  <div *ngIf="selectedItem" class="selection">
     <b>{{selectedItem.title}}</b>
-    <ion-icon name="{{selectedItem.icon}}"></ion-icon>
-    <div>
-      You navigated here from <b>{{selectedItem.title}}</b>
+    <div class="contentView" [innerHTML]="selectedItem.content">
     </div>
   </div>
 </ion-content>
