@@ -6,6 +6,7 @@ import {LoginPage} from './pages/auth/login/login';
 import {HomePage} from './pages/home/home';
 import {ListPage} from './pages/list/list';
 import {AccountPage} from './pages/auth/account/account';
+import {MapsPage} from './pages/maps/maps';
 // import {ListPage} from './pages/list/list';
 import {
     FIREBASE_PROVIDERS, defaultFirebase,
@@ -54,7 +55,8 @@ class MyApp {
     // set our app's pages
     this.pages = [
       { title: 'Hello Ionic', component: HomePage },
-      { title: ' List page', component: ListPage}
+      { title: ' List page', component: ListPage},
+      {title: 'Map', component: MapsPage}
     ];
   }
 
