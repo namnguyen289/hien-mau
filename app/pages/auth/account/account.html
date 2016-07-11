@@ -21,7 +21,7 @@
     <div class="avatar">
         <img id="avatarImg" src="/img/none_avatar.png">
         <!--<img  src="/img/none_avatar.png">-->
-        <b [innerHtml]="username"></b>
+        <b>{{userInfo.displayName}}</b>
     </div>
     <div [ngSwitch]="accountSeg">
         <ion-list *ngSwitchWhen="'infor'">

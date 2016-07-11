@@ -1,22 +1,52 @@
 import {Injectable} from '@angular/core';
 import {Storage, LocalStorage, Events} from 'ionic-angular';
-import {AngularFire, AuthProviders, AuthMethods } from 'angularfire2';
+import {AngularFire, AuthProviders, AuthMethods,FirebaseObjectObservable } from 'angularfire2';
 
+export declare class UserInfo {
+    uid:string;
+    avatarImg: string;
+    displayName: string;
+    email: string;
+    phone: string;
+    address: string;
+    bloodType: string;
+    rh: string;
+    gender: string;
+    birthday: any;
+}
 
 @Injectable()
 export class UserData {
 
     HAS_LOGGED_IN: string = 'hasLoggedIn';
-    AUTH_INFO:string = 'AUTH_INFO';
+    AUTH_INFO: string = 'AUTH_INFO';
+    AVATAR_DEFAULT:string = "/img/none_avatar.png";
     storage = new Storage(LocalStorage);
     error: any;
     authProvider: any;
-    authData:any;
+    authData: any;
+
+    defaultUserInfo:UserInfo = {
+        uid:"",
+        avatarImg: '/img/none_avatar.png',
+        displayName: '',
+        email: '',
+        phone: '',
+        address: '',
+        bloodType: 'O',
+        rh:'Rh',
+        gender: 'm',
+        birthday: '1988-08-29'
+    }
 
     constructor(
         private events: Events,
         public af: AngularFire) {
 
+    }
+
+    getDefaultUserInfo():UserInfo{
+        return JSON.parse(JSON.stringify(this.defaultUserInfo));
     }
 
     login(username) {
@@ -39,7 +69,7 @@ export class UserData {
                 console.log(`Create User Success:`, user);
                 _credentials.created = true;
 
-                return this.loginWithSocial(_credentials,AuthProviders.Password);
+                return this.loginWithSocial(_credentials, AuthProviders.Password);
             })
             .catch(e => console.error(`Create User Failure:`, e));
     }
@@ -49,29 +79,30 @@ export class UserData {
             provider: _authProviders,//AuthProviders.Google,
             method: AuthMethods.Popup
         }).then((authData) => {
-            console.log(authData)
+            console.log(JSON.stringify(authData));
             this.storage.set(this.HAS_LOGGED_IN, true);
-            this.storage.set(this.AUTH_INFO,JSON.stringify(authData));
+            this.storage.set(this.AUTH_INFO, JSON.stringify(authData));
             this.authData = authData;
             // already has user... need better info??
             if (!authData) {
                 // this.dismiss()
             }
-            
+
             const itemObservable = this.af.database.object('/users/' + authData.uid);
             itemObservable.set({
                 "provider": authData.auth.providerData[0].providerId,
-                "avatar": authData.auth.photoURL || "MISSING",
+                "avatarImg": authData.auth.photoURL || this.AVATAR_DEFAULT,
                 "email": authData.auth.email || "MISSING",
                 "displayName": authData.auth.providerData[0].displayName || authData.auth.email,
             })
             this.events.publish('user:login');
         }).then((value) => {
-            if(_callBack)_callBack(value);
+            console.log("callback");
+            if (_callBack) _callBack(value);
             // this.dismiss()
         }).catch((error) => {
             this.error = error
-            console.log(error)
+            console.log(JSON.stringify(error));
         });
     }
     /**
@@ -83,31 +114,26 @@ export class UserData {
      * @param _credentials {Object} the email and password from the form
      * @param _event {Object} the event information from the form submit
      */
-    loginWithPassword(credentials) {
-        // if this was called from the register user,  the check if we 
-        // need to create the user object or not
-        let addUser = credentials.created
-        credentials.created = null;
-
+    loginWithPassword(credentials,_callBack?) {
         // login usig the email/password auth provider
         this.af.auth.login(credentials, {
             provider: AuthProviders.Password,
             method: AuthMethods.Password
         }).then((authData) => {
-            console.log(authData)
+            this.storage.set(this.HAS_LOGGED_IN, true);
+            this.storage.set(this.AUTH_INFO, JSON.stringify(authData));
+            this.authData = authData;
 
-            if (addUser) {
-                const itemObservable = this.af.database.object('/users/' + authData.uid);
-                itemObservable.set({
-                    "provider": authData.auth.providerData[0].providerId,
-                    "avatar": authData.auth.photoURL || "MISSING",
-                    "displayName": authData.auth.providerData[0].displayName || authData.auth.email,
-                })
-            } else {
-                // this.dismiss()
-            }
+            const itemObservable = this.af.database.object('/users/' + authData.uid);
+            itemObservable.set({
+                "provider": authData.auth.providerData[0].providerId,
+                "avatarImg": authData.auth.photoURL || this.AVATAR_DEFAULT,
+                "displayName": authData.auth.providerData[0].displayName || authData.auth.email,
+            })
+             this.events.publish('user:login');
         }).then((value) => {
-            // this.dismiss()
+            console.log("callback");
+            if (_callBack) _callBack(value);
         }).catch((error) => {
             this.error = error
             console.log(error)
@@ -126,10 +152,29 @@ export class UserData {
             return value;
         });
     }
-    
-    getAuthData(){
+
+    getAuthData() {
         return this.storage.get(this.AUTH_INFO).then((value) => {
             return value;
         });
+    }
+
+    updateUserInfo(_userInfor:UserInfo,_callback?){
+        const itemObservable = this.af.database.object('/users/' + _userInfor.uid);
+            itemObservable.set({
+               "email": _userInfor.email,
+               "avatarImg":_userInfor.avatarImg,
+               "displayName":_userInfor.displayName,
+               "phone":_userInfor.phone,
+               "address":_userInfor.address,
+               "bloodType":_userInfor.bloodType,
+               "rh":_userInfor.rh,
+               "gender":_userInfor.gender,
+               "birthday":_userInfor.birthday
+            })
+    }
+
+    getUserInfor(uid:string):FirebaseObjectObservable<any>{
+        return this.af.database.object('/users/' + uid);
     }
 }

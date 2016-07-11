@@ -1,6 +1,6 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild, enableProdMode} from '@angular/core';
 import {ionicBootstrap, Events, Platform, MenuController, Nav} from 'ionic-angular';
-import {StatusBar} from 'ionic-native';
+import {StatusBar,Splashscreen} from 'ionic-native';
 import {UserData} from './services/user-data';
 import {LoginPage} from './pages/auth/login/login';
 import {HomePage} from './pages/home/home';
@@ -9,39 +9,22 @@ import {AccountPage} from './pages/auth/account/account';
 import {MapsPage} from './pages/maps/maps';
 // import {ListPage} from './pages/list/list';
 import {
-    FIREBASE_PROVIDERS, defaultFirebase,
-    AngularFire, firebaseAuthConfig, AuthProviders,
-    AuthMethods
+  FIREBASE_PROVIDERS, defaultFirebase,
+  AngularFire, firebaseAuthConfig, AuthProviders,
+  AuthMethods
 } from 'angularfire2';
 
 @Component({
-  templateUrl: 'build/app.html',
-    providers: [
-        FIREBASE_PROVIDERS,
-        // Initialize Firebase app  
-        defaultFirebase({
-            apiKey: "AIzaSyCwHn4SaG4xAgcjP-7s3Ro4HBUSVX3YqGI",
-            authDomain: "hienmau-57688.firebaseapp.com",
-            databaseURL: "https://hienmau-57688.firebaseio.com",
-            storageBucket: "hienmau-57688.appspot.com",
-        }),
-        firebaseAuthConfig({
-            provider: AuthProviders.Password,
-            method: AuthMethods.Password,
-            remember: 'default',
-            scope: ['email']
-        }),
-        UserData
-    ]
+  templateUrl: 'build/app.html'
 })
 class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   rootPage: any = LoginPage;
-  pages: Array<{title: string, component: any}>;
-  authProvider:any;
-  hasLogined:boolean = false;
-  authData:any;
+  pages: Array<{ title: string, component: any }>;
+  authProvider: any;
+  hasLogined: boolean = false;
+  authData: any;
 
   constructor(
     private events: Events,
@@ -49,15 +32,17 @@ class MyApp {
     private userData: UserData,
     private menu: MenuController
   ) {
+    Splashscreen.show();
     this.authProvider = AuthProviders;
     this.initializeApp();
 
     // set our app's pages
     this.pages = [
       { title: 'Hello Ionic', component: HomePage },
-      { title: ' List page', component: ListPage},
-      {title: 'Map', component: MapsPage}
+      { title: ' List page', component: ListPage },
+      { title: 'Map', component: MapsPage }
     ];
+    // Splashscreen.hide();
   }
 
   initializeApp() {
@@ -67,9 +52,9 @@ class MyApp {
       StatusBar.styleDefault();
     });
 
-     this.userData.hasLoggedIn().then((hasLoggedIn) => {
+    this.userData.hasLoggedIn().then((hasLoggedIn) => {
       //  this.hasLogined = hasLoggedIn === 'true';
-       if(hasLoggedIn === 'true')this.logged();
+      if (hasLoggedIn === 'true') this.logged();
     });
 
     this.listenToLoginEvents();
@@ -82,20 +67,24 @@ class MyApp {
     this.nav.setRoot(page.component);
   }
 
-  account(_event){
+  account(_event) {
     _event.preventDefault();
-    this.nav.push(AccountPage,this.authData);
+    this.nav.push(AccountPage, this.authData);
   }
 
-  logOut(){
+  logOut() {
     this.userData.logout();
   }
 
-  loginWithSocial(_authProvider,_event){
-        _event.preventDefault();
-
-        this.userData.loginWithSocial(_authProvider,(val)=>console.log(val));
+  loginWithSocial(_authProvider, _event) {
+    // _event.preventDefault();
+    console.log("start login" + _authProvider);
+    this.userData.loginWithSocial(_authProvider, (val) => {
+      console.log(JSON.stringify(val));
+      this.nav.setRoot(HomePage);
     }
+    );
+  }
 
   listenToLoginEvents() {
     this.events.subscribe('user:login', () => {
@@ -114,15 +103,25 @@ class MyApp {
       console.log('user:logout');
     });
   }
-  logged(){
+  logged() {
     this.hasLogined = true;
     // this.authData = this.userData.authData;
-    this.userData.getAuthData().then((value)=>{
+    this.userData.getAuthData().then((value) => {
       this.authData = JSON.parse(value);
       // console.log(this.authData);
       this.nav.setRoot(HomePage);
     });
   }
 }
-
-ionicBootstrap(MyApp);
+enableProdMode();
+ionicBootstrap(MyApp, [
+  FIREBASE_PROVIDERS,
+  // Initialize Firebase app  
+  defaultFirebase({
+    apiKey: "AIzaSyBGqdHqg2C_x-1llpBPJmLaxzvZOsevWeU",
+    authDomain: "hienmau-4e39a.firebaseapp.com",
+    databaseURL: "https://hienmau-4e39a.firebaseio.com",
+    storageBucket: "hienmau-4e39a.firebaseapp.com",
+  }),
+  UserData
+]);

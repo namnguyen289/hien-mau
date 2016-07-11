@@ -1,3 +1,7 @@
+facebook
+APP Secret: b80f7b569cbc2b758bcabd9d1e46733e
+APP ID: 699389796866763
+
 Parameters in Blogspot feed
  This post presented for me to understanding the "Query Parameters in Blogspot Feed". As we know, the URL to get feed items of our blog is http://yourblogname.blogspot.com/feeds/posts/default. You can review this feed after as my blog feed : http://isitdull.blogspot.com/feeds/posts/default or you can use your own blog to experiment.
 There are two options how to using your blogger's feed
