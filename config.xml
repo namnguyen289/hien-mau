@@ -19,6 +19,7 @@
   <allow-intent href="geo:*"/>
   <allow-intent href="*.firebaseio.com/*"/>
   <allow-intent href="*.firebase.com/*"/>
+  <allow-intent href="auth.firebase.com" />
   <allow-intent href="*.googleapis.com"/>
   <allow-intent href="*.google.com/*"/>
   <allow-intent href="*.hienmau.info"/>

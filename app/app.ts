@@ -2,6 +2,7 @@ import {Component, ViewChild, enableProdMode} from '@angular/core';
 import {ionicBootstrap, Events, Platform, MenuController, Nav} from 'ionic-angular';
 import {StatusBar,Splashscreen} from 'ionic-native';
 import {UserData} from './services/user-data';
+import {LocationData} from './services/location-data';
 import {LoginPage} from './pages/auth/login/login';
 import {HomePage} from './pages/home/home';
 import {ListPage} from './pages/list/list';
@@ -108,6 +109,7 @@ class MyApp {
     // this.authData = this.userData.authData;
     this.userData.getAuthData().then((value) => {
       this.authData = JSON.parse(value);
+      this.userData.locTracking(this.authData.uid);
       // console.log(this.authData);
       this.nav.setRoot(HomePage);
     });
@@ -123,5 +125,6 @@ ionicBootstrap(MyApp, [
     databaseURL: "https://hienmau-4e39a.firebaseio.com",
     storageBucket: "hienmau-4e39a.firebaseapp.com",
   }),
-  UserData
+  UserData,
+  LocationData
 ]);
