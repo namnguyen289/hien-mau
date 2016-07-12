@@ -4,14 +4,22 @@
 		text-align:center;
 	}
 	.avatar{
-		margin: 2vh auto;
-    	width: 152px;
-		img{
-    		border-radius: 50%;
-			height: 152px;
-			width: 152px;
+			margin: 2vh auto;
+			width: 100%;
+			img{
+				display: block;
+				margin: 2vh auto;
+				border-radius: 50%;
+				height: 152px;
+				width: 152px;
+				background-image: url('/img/none_avatar.png');
+				background-size: cover;
+			}
+			b{
+				text-align: center;
+				display: block
+			}
 		}
-	}
 	.clearBG .item-inner{
 		background-image: none;
 	}

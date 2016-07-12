@@ -19,7 +19,7 @@
 </ion-toolbar>
 <ion-content class="outer-content">
     <div class="avatar">
-        <img id="avatarImg" src="/img/none_avatar.png">
+        <img id="avatarImg" [src]="userInfo.avatarImg">
         <!--<img  src="/img/none_avatar.png">-->
         <b>{{userInfo.displayName}}</b>
     </div>

@@ -107,11 +107,13 @@ class MyApp {
   logged() {
     this.hasLogined = true;
     // this.authData = this.userData.authData;
-    this.userData.getAuthData().then((value) => {
-      this.authData = JSON.parse(value);
-      this.userData.locTracking(this.authData.uid);
-      // console.log(this.authData);
-      this.nav.setRoot(HomePage);
+    this.userData.getAuthData(value=>{
+      if(value){
+        this.authData = JSON.parse(value);
+        this.userData.locTracking(this.authData.uid);
+        // console.log(this.authData);
+        this.nav.setRoot(HomePage);
+      }
     });
   }
 }

@@ -110,8 +110,10 @@ export class UserData {
         });
     }
 
-    getAuthData() {
-        return this.storage.get(this.AUTH_INFO);
+    getAuthData(_callback) {
+        return this.storage.get(this.AUTH_INFO).then(val=>{
+            _callback(val);
+        });
     }
     /** 
      * Call after get authentication information 
@@ -123,13 +125,16 @@ export class UserData {
         this.storage.set(this.AUTH_INFO, JSON.stringify(authData));
         this.authData = authData;
 
-        const itemObservable = this.af.database.object('/users/' + authData.uid);
-        itemObservable.update({
+        var obj:any = {
             "provider": authData.auth.providerData[0].providerId,
-            "avatarImg": authData.auth.photoURL || this.AVATAR_DEFAULT,
             "email": authData.auth.email || "MISSING",
             "displayName": authData.auth.providerData[0].displayName || authData.auth.email,
-        });
+        };
+        if (authData.auth.providerData[0].providerId != AuthMethods.Password) {
+            obj.avatarImg = authData.auth.photoURL || this.AVATAR_DEFAULT;
+        }
+        const itemObservable = this.af.database.object('/users/' + authData.uid);
+        itemObservable.update(obj);
         this.locTracking(authData.uid);
         this.events.publish('user:login');
     }
