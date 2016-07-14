@@ -3,6 +3,7 @@ import {ionicBootstrap, Events, Platform, MenuController, Nav} from 'ionic-angul
 import {StatusBar,Splashscreen} from 'ionic-native';
 import {UserData} from './services/user-data';
 import {LocationData} from './services/location-data';
+import {ConnectivityService} from './services/connectivity-service';
 import {LoginPage} from './pages/auth/login/login';
 import {HomePage} from './pages/home/home';
 import {ListPage} from './pages/list/list';
@@ -107,14 +108,14 @@ class MyApp {
   logged() {
     this.hasLogined = true;
     // this.authData = this.userData.authData;
-    this.userData.getAuthData(value=>{
-      if(value){
-        this.authData = JSON.parse(value);
-        this.userData.locTracking(this.authData.uid);
-        // console.log(this.authData);
-        this.nav.setRoot(HomePage);
-      }
-    });
+    // this.userData.getAuthData(value=>{
+    //   if(value){
+    //     this.authData = JSON.parse(value);
+    //     this.userData.locTracking(this.authData.uid);
+    //     // console.log(this.authData);
+    //     this.nav.setRoot(HomePage);
+    //   }
+    // });
   }
 }
 enableProdMode();
@@ -128,5 +129,6 @@ ionicBootstrap(MyApp, [
     storageBucket: "hienmau-4e39a.firebaseapp.com",
   }),
   UserData,
-  LocationData
+  LocationData,
+  ConnectivityService
 ]);

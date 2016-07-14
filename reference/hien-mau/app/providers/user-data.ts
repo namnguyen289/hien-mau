@@ -23,6 +23,7 @@ export class UserData {
     AUTH_INFO: string = 'AUTH_INFO';
     AVATAR_DEFAULT: string = "/img/none_avatar.png";
     storage = new Storage(LocalStorage);
+    hasLogined: boolean = false;
     error: any;
     authProvider: any;
     authData: any;
@@ -44,24 +45,15 @@ export class UserData {
         private events: Events,
         public locationData: LocationData,
         public af: AngularFire) {
-
+        this.checkLogged();
     }
 
-    getDefaultUserInfo(): UserInfo {
-        return JSON.parse(JSON.stringify(this.defaultUserInfo));
-    }
-    /**
-     * this create in the user using the form credentials. 
-     */
-    registerUser(_credentials) {
-        this.af.auth.createUser(_credentials)
-            .then((user) => {
-                console.log(`Create User Success:`, user);
-                _credentials.created = true;
-
-                return this.loginWithSocial(_credentials, AuthProviders.Password);
-            })
-            .catch(e => console.error(`Create User Failure:`, e));
+    checkLogged() {
+        this.storage.get(this.AUTH_INFO).then(val => {
+            this.authData = JSON.parse(val);
+            this.hasLogined = this.authData != null;
+            // console.log(JSON.stringify(this.authData));
+        }).catch(e=>console.log(e));
     }
 
     loginWithSocial(_authProviders, _callBack?) {
@@ -101,20 +93,10 @@ export class UserData {
     logout() {
         this.storage.remove(this.HAS_LOGGED_IN);
         this.storage.remove(this.AUTH_INFO);
+        this.hasLogined = false;
         this.events.publish('user:logout');
     }
 
-    hasLoggedIn() {
-        return this.storage.get(this.HAS_LOGGED_IN).then((value) => {
-            return value;
-        });
-    }
-
-    getAuthData(_callback) {
-        return this.storage.get(this.AUTH_INFO).then(val=>{
-            _callback(val);
-        });
-    }
     /** 
      * Call after get authentication information 
     */
@@ -124,8 +106,9 @@ export class UserData {
         this.storage.set(this.HAS_LOGGED_IN, true);
         this.storage.set(this.AUTH_INFO, JSON.stringify(authData));
         this.authData = authData;
+        this.hasLogined = true;
 
-        var obj:any = {
+        var obj: any = {
             "provider": authData.auth.providerData[0].providerId,
             "email": authData.auth.email || "MISSING",
             "displayName": authData.auth.providerData[0].displayName || authData.auth.email,
@@ -156,14 +139,20 @@ export class UserData {
     }
 
     locTracking(uid: string) {
-        // this.locationData.getCurrentPosition(data => {
-        //     const itemObservable = this.af.database.list('/users/' + uid + '/locations/');
-        //     itemObservable.push(data);
-        //     console.log(data);
-        // });
+        this.locationData.getCurrentPosition(data => {
+            const itemObservable = this.af.database.list('/users/' + uid + '/locations/');
+            itemObservable.push(data);
+            console.log(data);
+        });
     }
 
     getUserInfor(uid: string): FirebaseObjectObservable<any> {
         return this.af.database.object('/users/' + uid);
+    }
+    /**
+     * Get Defualt User information Object
+     */
+    getDefaultUserInfo(): UserInfo {
+        return JSON.parse(JSON.stringify(this.defaultUserInfo));
     }
 }
