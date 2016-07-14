@@ -7,18 +7,19 @@
             Account
         </ion-title>
     </ion-navbar>
+    <ion-toolbar [attr.primary]="isAndroid ? '' : null">
+        <ion-segment [(ngModel)]="accountSeg">
+            <ion-segment-button value="infor">
+                Information
+            </ion-segment-button>
+            <ion-segment-button value="setting">
+                Setting
+            </ion-segment-button>
+        </ion-segment>
+    </ion-toolbar>
 </ion-header>
 
-<ion-toolbar [attr.primary]="isAndroid ? '' : null">
-    <ion-segment [(ngModel)]="accountSeg">
-        <ion-segment-button value="infor">
-            Information
-        </ion-segment-button>
-        <ion-segment-button value="setting">
-            Setting
-        </ion-segment-button>
-    </ion-segment>
-</ion-toolbar>
+
 <ion-content class="outer-content">
     <div class="avatar">
         <img id="avatarImg" [src]="userInfo.avatarImg">
@@ -61,7 +62,7 @@
                     <ion-option value="f">Female</ion-option>
                     <ion-option value="m" checked="true">Male</ion-option>
                 </ion-select>
-                </ion-item>
+            </ion-item>
             <ion-item>
                 <ion-label floating>Birthday</ion-label>
                 <ion-datetime displayFormat="DD/MMM/YYYY" min="1960" max="2000" [(ngModel)]="userInfo.birthday"></ion-datetime>

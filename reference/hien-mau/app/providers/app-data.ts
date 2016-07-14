@@ -19,4 +19,5 @@ export class AppData {
             { title: 'Map', component: MapPage }
         ];
     }
+    
 }

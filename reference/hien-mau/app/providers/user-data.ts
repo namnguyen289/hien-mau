@@ -141,7 +141,7 @@ export class UserData {
     locTracking(uid: string) {
         this.locationData.getCurrentPosition(data => {
             const itemObservable = this.af.database.list('/users/' + uid + '/locations/');
-            itemObservable.push(data);
+            // itemObservable.push(data);
             console.log(data);
         });
     }
