@@ -5,11 +5,13 @@ import {AngularFire, AuthProviders, AuthMethods, FirebaseObjectObservable } from
 
 import {MapPage} from '../pages/map/map';
 import {HomePage} from '../pages/home/home';
+import {LoginPage} from '../pages/auth/login/login';
 
 
 @Injectable()
 export class AppData {
     menuPages: Array<{ title: string, component: any }>;
+    menuUnauthPages: Array<{ title: string, component: any }>;
     authProvider: any;
 
     constructor() {
@@ -17,6 +19,9 @@ export class AppData {
         this.menuPages = [
             { title: 'Home', component: HomePage },
             { title: 'Map', component: MapPage }
+        ];
+        this.menuUnauthPages = [
+            { title: 'Login', component: LoginPage }
         ];
     }
     

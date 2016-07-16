@@ -41,13 +41,14 @@ export class AccountPage {
         birthday: '1988-08-29'
     };
 
-    constructor(public userData: UserData, navParams: NavParams, platform: Platform, af: AngularFire) {
+    constructor(private events: Events, public userData: UserData, navParams: NavParams, platform: Platform, af: AngularFire) {
         this.authData = navParams.data;
         // console.log(this.authData);
         // console.log(this.useAvatar);
         // this.userInfo.displayName = this.authData.auth.displayName;
         // this.userInfo.avatarImg = this.authData && this.authData.auth.photoURL != 'MISSING' ? this.authData.auth.photoURL : "";
         this.userInfo.uid = this.authData.uid;
+        this.events.publish('event:ShowLoading','Loading...');
         userData.getUserInfor(this.userInfo.uid).subscribe(obj => {
             if (obj) {
                 this.userInfo.uid = obj.$key;
@@ -63,7 +64,8 @@ export class AccountPage {
             } else {
                 this.userInfo = userData.getDefaultUserInfo();
             }
-            console.log(this.userInfo);
+            // console.log(this.userInfo);
+            this.events.publish('event:HideLoading');
         });
 
     }

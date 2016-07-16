@@ -18,8 +18,11 @@
       </button>
       </ion-item-group>
       <ion-item-group *ngIf="!userData.hasLogined">
-        <button ion-item menuClose block (click)="loginWithSocial(appData.authProvider.Facebook, $event)">Connect with Facebook</button>
-        <button ion-item menuClose block (click)="loginWithSocial(appData.authProvider.Google, $event)">Connect with Google</button>
+        <button menuClose ion-item *ngFor="let p of appData.menuUnauthPages" (click)="openPage(p)">
+          {{p.title}}
+        </button>
+        <!--<button ion-item menuClose block (click)="loginWithSocial(appData.authProvider.Facebook, $event)">Connect with Facebook</button>
+        <button ion-item menuClose block (click)="loginWithSocial(appData.authProvider.Google, $event)">Connect with Google</button>-->
       </ion-item-group>
       <button menuClose ion-item *ngFor="let p of appData.menuPages" (click)="openPage(p)">
         {{p.title}}

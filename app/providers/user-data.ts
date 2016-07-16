@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Storage, LocalStorage, Events} from 'ionic-angular';
-import {AngularFire, AuthProviders, AuthMethods, FirebaseObjectObservable } from 'angularfire2';
+import {AngularFire, AuthProviders, AuthMethods, FirebaseObjectObservable,FirebaseAuthState } from 'angularfire2';
 import {LocationData} from './location-data';
 
 export declare class UserInfo {
@@ -52,8 +52,9 @@ export class UserData {
         this.storage.get(this.AUTH_INFO).then(val => {
             this.authData = JSON.parse(val);
             this.hasLogined = this.authData != null;
-            // console.log(JSON.stringify(this.authData));
-        }).catch(e=>console.log(e));
+            // console.log(val);
+            // console.log(this.hasLogined);
+        }).catch(e => console.log(e));
     }
 
     loginWithSocial(_authProviders, _callBack?) {
@@ -102,7 +103,7 @@ export class UserData {
     */
     onLogin(authData: any) {
 
-        console.log(JSON.stringify(authData));
+        // console.log(JSON.stringify(authData));
         this.storage.set(this.HAS_LOGGED_IN, true);
         this.storage.set(this.AUTH_INFO, JSON.stringify(authData));
         this.authData = authData;
@@ -122,7 +123,21 @@ export class UserData {
         this.events.publish('user:login');
     }
 
+    /**
+     * this create in the user using the form credentials. 
+     */
+    registerUser(_credentials):Promise<FirebaseAuthState> {
+       return this.af.auth.createUser(_credentials);
+            // .then((user) => {
+            //     console.log(`Create User Success:`, user);
+            //     _credentials.created = true;
+            // })
+            // .catch(e => console.error(`Create User Failure:`, e));
+    }
+
     updateUserInfo(_userInfor: UserInfo, _callback?) {
+
+        this.events.publish('event:ShowLoading', 'Updating...');
         const itemObservable = this.af.database.object('/users/' + _userInfor.uid);
         itemObservable.update({
             "email": _userInfor.email,
@@ -134,6 +149,9 @@ export class UserData {
             "rh": _userInfor.rh,
             "gender": _userInfor.gender,
             "birthday": _userInfor.birthday
+        }).then((val) => this.events.publish('event:HideLoading')).catch(e => {
+            this.events.publish('event:HideLoading');
+            console.log(e);
         });
         this.locTracking(_userInfor.uid);
     }
@@ -141,8 +159,9 @@ export class UserData {
     locTracking(uid: string) {
         this.locationData.getCurrentPosition(data => {
             const itemObservable = this.af.database.list('/users/' + uid + '/locations/');
+            //to-do open frane when public
             // itemObservable.push(data);
-            console.log(data);
+            // console.log(data);
         });
     }
 

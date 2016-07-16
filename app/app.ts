@@ -1,6 +1,6 @@
 //import Plugin
 import {Component, ViewChild, enableProdMode} from '@angular/core';
-import {Platform, ionicBootstrap, Nav, MenuController,Events} from 'ionic-angular';
+import {Platform, ionicBootstrap, Nav, MenuController, Events, Loading} from 'ionic-angular';
 import {StatusBar, Splashscreen} from 'ionic-native';
 import {FIREBASE_PROVIDERS, defaultFirebase, AngularFire, firebaseAuthConfig, AuthProviders, AuthMethods} from 'angularfire2';
 //import providers
@@ -11,6 +11,7 @@ import {AppData} from './providers/app-data';
 //import pages
 import {HomePage} from './pages/home/home';
 import {AccountPage} from './pages/auth/account/account';
+import {SignUpPage} from './pages/auth/sign-up/sign-up';
 
 
 @Component({
@@ -21,13 +22,15 @@ export class MyApp {
 
 
   rootPage: any = HomePage;
+  loading: Loading;
 
-  constructor( private events: Events, platform: Platform, private userData: UserData, private appData: AppData, private menu: MenuController
+  constructor(private events: Events, platform: Platform, private userData: UserData, private appData: AppData, private menu: MenuController
   ) {
     // Splashscreen.show();
     platform.ready().then(() => {
       StatusBar.styleDefault();
-      // console.log(userData.hasLogined);      
+      // console.log(userData.hasLogined);   
+      this.listenToEvents();
     });
   }
 
@@ -36,7 +39,7 @@ export class MyApp {
    */
   loginWithSocial(_authProvider) {
     console.log("start login" + _authProvider);
-    this.userData.loginWithSocial(_authProvider, val=>this.nav.setRoot(HomePage));
+    this.userData.loginWithSocial(_authProvider, val => this.nav.setRoot(HomePage));
   }
   /**
    * Navigate in menu
@@ -51,13 +54,19 @@ export class MyApp {
    */
   account(_event) {
     _event.preventDefault();
-    this.nav.push(AccountPage, this.userData.authData);
+    this.nav.setRoot(AccountPage, this.userData.authData);
   }
 
   /**
    * listen to Login Events
    */
-  listenToLoginEvents() {
+  listenToEvents() {
+    this.events.subscribe('event:ShowLoading', (param) => {
+      this.presentLoading(param);
+    });
+    this.events.subscribe('event:HideLoading', () => {
+      this.hideLoading();
+    });
     this.events.subscribe('user:login', () => {
       console.log('user:login');
     });
@@ -70,6 +79,30 @@ export class MyApp {
       this.nav.setRoot(HomePage);
       console.log('user:logout');
     });
+  }
+  presentLoading(options: any) {
+    let message = 'Pleasess wait...';
+    if (typeof options === 'object' && typeof options[0] === 'string') {
+      message = options[0];
+    }
+    try {
+      //to-do will fix in beta 11
+      this.loading = Loading.create({
+        content: message, dismissOnPageChange: true
+      });
+      this.nav.present(this.loading).catch(e => { console.log(e) });
+    } catch (e) {
+      console.log(e);
+    };
+  }
+
+  hideLoading() {
+    try {
+      this.loading.dismiss();
+    } catch (e) {
+      console.log(e);
+      // this.loading.dismiss();
+    };
   }
 }
 

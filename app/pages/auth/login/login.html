@@ -1,10 +1,17 @@
-<ion-navbar *navbar>
-    <ion-title>
-        Login
-    </ion-title>
-</ion-navbar>
+<ion-header>
+    <ion-navbar>
+        <button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>
+            User Login
+        </ion-title>
+    </ion-navbar>
+</ion-header>
 <ion-content padding>
-    <h1>User Login</h1>
+    <div>
+        <img class="logo" src="img/icon.png">
+    </div>
     <form #loginCreds="ngForm">
         <ion-item>
             <ion-label>Username</ion-label>
@@ -18,10 +25,10 @@
 
         <div padding>
             <button block (click)="login(loginCreds.value, $event)">Login</button>
-            <!--<button block (click)="registerUser(loginCreds.value, $event)">Create Account</button>-->
-         </div>        
+            <button block (click)="registerUser(loginCreds.value, $event)">Create Account</button>
+        </div>
         <div padding>
-            <!--<button block (click)="loginWithSocial(loginCreds.value, authProvider.Facebook, $event)">Connect with Facebook</button>-->
+            <button block (click)="loginWithSocial(loginCreds.value, authProvider.Facebook, $event)">Connect with Facebook</button>
             <button block (click)="loginWithSocial(loginCreds.value, authProvider.Google, $event)">Connect with Google</button>
         </div>
         <div padding>

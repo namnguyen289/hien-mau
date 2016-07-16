@@ -1,8 +1,9 @@
-import {Modal,Nav, NavController, Page, ViewController} from 'ionic-angular';
+import {Modal, Nav, NavController, Page, ViewController} from 'ionic-angular';
 import {Component, OnInit, Inject} from '@angular/core';
 import {AngularFire, AuthProviders, AuthMethods } from 'angularfire2';
-import {UserData} from '../../../services/user-data';
+import {UserData} from '../../../providers/user-data';
 import {HomePage} from '../../home/home';
+import {SignUpPage} from '../sign-up/sign-up';
 
 @Page({
     templateUrl: 'build/pages/auth/login/login.html'
@@ -15,7 +16,7 @@ export class LoginPage {
     constructor(public af: AngularFire,
         public viewCtrl: ViewController,
         public userData: UserData,
-        public nav:Nav
+        public nav: Nav
     ) {
         this.authProvider = AuthProviders;
     }
@@ -28,21 +29,15 @@ export class LoginPage {
 
     loginWithSocial(_credentials, _authProvider, _event) {
         _event.preventDefault();
-
-        this.userData.loginWithSocial(_authProvider, (val) => console.log(JSON.stringify(val)));
+        this.userData.loginWithSocial(_authProvider, (val) => this.nav.setRoot(HomePage));
     }
 
-    /**
-     * this logs in the user using the form credentials.
-     * 
-     * if the user is a new user, then we need to create the user AFTER
-     * we have successfully logged in
-     * 
-     * @param _credentials {Object} the email and password from the form
-     * @param _event {Object} the event information from the form submit
-     */
     login(credentials, _event) {
         _event.preventDefault();
-        this.userData.loginWithPassword(credentials,val=>{this.nav.setRoot(HomePage);});
+        this.userData.loginWithPassword(credentials, val => { this.nav.setRoot(HomePage); });
+    }
+     registerUser(credentials, _event) {
+        _event.preventDefault();
+        this.nav.setRoot(SignUpPage);
     }
 }

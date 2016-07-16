@@ -1,0 +1,16 @@
+.login-page{
+    .item-input ion-input{
+        border-left: 1px solid #dedede;
+    }
+    .item-input ion-label{
+        width: 80px;
+    }
+    .logo{
+        width: 60%;
+        display: block;
+        margin: 0 auto;
+    }
+    .error{
+        color: red;
+    }
+}

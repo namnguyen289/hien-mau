@@ -28,6 +28,10 @@
     <div [ngSwitch]="accountSeg">
         <ion-list *ngSwitchCase="'infor'">
             <ion-item>
+                <ion-label floating>Name</ion-label>
+                <ion-input [(ngModel)]="userInfo.displayName" type="text"></ion-input>
+            </ion-item>
+            <ion-item>
                 <ion-label floating>Email</ion-label>
                 <ion-input [(ngModel)]="userInfo.email" type="text"></ion-input>
             </ion-item>
