@@ -1,30 +1,32 @@
-<ion-navbar *navbar>
-    <button menuToggle>
-    <ion-icon name="menu"></ion-icon>
-  </button>
-    <ion-title>
-        Account
-    </ion-title>
-</ion-navbar>
+<ion-header>
+    <ion-navbar>
+        <button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>
+            Account
+        </ion-title>
+    </ion-navbar>
+    <ion-toolbar [attr.primary]="isAndroid ? '' : null">
+        <ion-segment [(ngModel)]="accountSeg">
+            <ion-segment-button value="infor">
+                Information
+            </ion-segment-button>
+            <ion-segment-button value="setting">
+                Setting
+            </ion-segment-button>
+        </ion-segment>
+    </ion-toolbar>
+</ion-header>
 
-<ion-toolbar [attr.primary]="isAndroid ? '' : null">
-    <ion-segment [(ngModel)]="accountSeg">
-        <ion-segment-button value="infor">
-            Information
-        </ion-segment-button>
-        <ion-segment-button value="setting">
-            Setting
-        </ion-segment-button>
-    </ion-segment>
-</ion-toolbar>
+
 <ion-content class="outer-content">
     <div class="avatar">
         <img id="avatarImg" [src]="userInfo.avatarImg">
-        <!--<img  src="/img/none_avatar.png">-->
         <b>{{userInfo.displayName}}</b>
     </div>
     <div [ngSwitch]="accountSeg">
-        <ion-list *ngSwitchWhen="'infor'">
+        <ion-list *ngSwitchCase="'infor'">
             <ion-item>
                 <ion-label floating>Email</ion-label>
                 <ion-input [(ngModel)]="userInfo.email" type="text"></ion-input>
@@ -39,7 +41,6 @@
             </ion-item>
             <ion-item>
                 <ion-label floating>Blood Type</ion-label>
-                <!--<ion-input [(ngModel)]="bloodType" type="password"></ion-input>-->
                 <ion-select [(ngModel)]="userInfo.bloodType">
                     <ion-option value="O" checked="true">O</ion-option>
                     <ion-option value="A">A</ion-option>
@@ -49,7 +50,6 @@
             </ion-item>
             <ion-item>
                 <ion-label floating>Rh</ion-label>
-                <!--<ion-input [(ngModel)]="bloodType" type="password"></ion-input>-->
                 <ion-select [(ngModel)]="userInfo.rh">
                     <ion-option value="Rh+" checked="true">Rh+</ion-option>
                     <ion-option value="Rh-">Rh-</ion-option>
@@ -62,14 +62,13 @@
                     <ion-option value="f">Female</ion-option>
                     <ion-option value="m" checked="true">Male</ion-option>
                 </ion-select>
-                <!--<ion-toggle [(ngModel)]="gender"></ion-toggle>-->
             </ion-item>
             <ion-item>
                 <ion-label floating>Birthday</ion-label>
                 <ion-datetime displayFormat="DD/MMM/YYYY" min="1960" max="2000" [(ngModel)]="userInfo.birthday"></ion-datetime>
             </ion-item>
         </ion-list>
-        <ion-list *ngSwitchWhen="'setting'">
+        <ion-list *ngSwitchCase="'setting'">
             <ion-item>
                 <ion-thumbnail item-left>
                     <img src="/img/none_avatar.png">

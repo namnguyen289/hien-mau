@@ -1,124 +1,78 @@
+//import Plugin
 import {Component, ViewChild, enableProdMode} from '@angular/core';
-import {ionicBootstrap, Events, Platform, MenuController, Nav} from 'ionic-angular';
-import {StatusBar,Splashscreen} from 'ionic-native';
-import {UserData} from './services/user-data';
-import {LocationData} from './services/location-data';
-import {ConnectivityService} from './services/connectivity-service';
-import {LoginPage} from './pages/auth/login/login';
+import {Platform, ionicBootstrap, Nav, MenuController,Events} from 'ionic-angular';
+import {StatusBar, Splashscreen} from 'ionic-native';
+import {FIREBASE_PROVIDERS, defaultFirebase, AngularFire, firebaseAuthConfig, AuthProviders, AuthMethods} from 'angularfire2';
+//import providers
+import {ConnectivityService} from './providers/connectivity-service/connectivity-service';
+import {UserData} from './providers/user-data';
+import {LocationData} from './providers/location-data';
+import {AppData} from './providers/app-data';
+//import pages
 import {HomePage} from './pages/home/home';
-import {ListPage} from './pages/list/list';
 import {AccountPage} from './pages/auth/account/account';
-import {MapsPage} from './pages/maps/maps';
-// import {ListPage} from './pages/list/list';
-import {
-  FIREBASE_PROVIDERS, defaultFirebase,
-  AngularFire, firebaseAuthConfig, AuthProviders,
-  AuthMethods
-} from 'angularfire2';
+
 
 @Component({
   templateUrl: 'build/app.html'
 })
-class MyApp {
+export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = LoginPage;
-  pages: Array<{ title: string, component: any }>;
-  authProvider: any;
-  hasLogined: boolean = false;
-  authData: any;
 
-  constructor(
-    private events: Events,
-    private platform: Platform,
-    private userData: UserData,
-    private menu: MenuController
+  rootPage: any = HomePage;
+
+  constructor( private events: Events, platform: Platform, private userData: UserData, private appData: AppData, private menu: MenuController
   ) {
-    Splashscreen.show();
-    this.authProvider = AuthProviders;
-    this.initializeApp();
-
-    // set our app's pages
-    this.pages = [
-      { title: 'Hello Ionic', component: HomePage },
-      { title: ' List page', component: ListPage },
-      { title: 'Map', component: MapsPage }
-    ];
-    // Splashscreen.hide();
-  }
-
-  initializeApp() {
-    this.platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
+    // Splashscreen.show();
+    platform.ready().then(() => {
       StatusBar.styleDefault();
+      // console.log(userData.hasLogined);      
     });
-
-    this.userData.hasLoggedIn().then((hasLoggedIn) => {
-      //  this.hasLogined = hasLoggedIn === 'true';
-      if (hasLoggedIn === 'true') this.logged();
-    });
-
-    this.listenToLoginEvents();
   }
 
+  /**
+   * Login with socical option
+   */
+  loginWithSocial(_authProvider) {
+    console.log("start login" + _authProvider);
+    this.userData.loginWithSocial(_authProvider, val=>this.nav.setRoot(HomePage));
+  }
+  /**
+   * Navigate in menu
+   */
   openPage(page) {
-    // close the menu when clicking a link from the menu
-    this.menu.close();
     // navigate to the new page if it is not the current page
     this.nav.setRoot(page.component);
   }
 
+  /**
+   * Navigate to account setting
+   */
   account(_event) {
     _event.preventDefault();
-    this.nav.push(AccountPage, this.authData);
+    this.nav.push(AccountPage, this.userData.authData);
   }
 
-  logOut() {
-    this.userData.logout();
-  }
-
-  loginWithSocial(_authProvider, _event) {
-    // _event.preventDefault();
-    console.log("start login" + _authProvider);
-    this.userData.loginWithSocial(_authProvider, (val) => {
-      console.log(JSON.stringify(val));
-      this.nav.setRoot(HomePage);
-    }
-    );
-  }
-
+  /**
+   * listen to Login Events
+   */
   listenToLoginEvents() {
     this.events.subscribe('user:login', () => {
-      this.logged();
       console.log('user:login');
     });
 
     this.events.subscribe('user:signup', () => {
-      this.logged();
       console.log('user:signup');
     });
 
     this.events.subscribe('user:logout', () => {
-      this.hasLogined = false;
-      this.nav.setRoot(LoginPage);
+      this.nav.setRoot(HomePage);
       console.log('user:logout');
     });
   }
-  logged() {
-    this.hasLogined = true;
-    // this.authData = this.userData.authData;
-    // this.userData.getAuthData(value=>{
-    //   if(value){
-    //     this.authData = JSON.parse(value);
-    //     this.userData.locTracking(this.authData.uid);
-    //     // console.log(this.authData);
-    //     this.nav.setRoot(HomePage);
-    //   }
-    // });
-  }
 }
-enableProdMode();
+
 ionicBootstrap(MyApp, [
   FIREBASE_PROVIDERS,
   // Initialize Firebase app  
@@ -128,7 +82,8 @@ ionicBootstrap(MyApp, [
     databaseURL: "https://hienmau-4e39a.firebaseio.com",
     storageBucket: "hienmau-4e39a.firebaseapp.com",
   }),
+  ConnectivityService,
   UserData,
   LocationData,
-  ConnectivityService
+  AppData
 ]);

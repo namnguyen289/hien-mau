@@ -1,6 +1,6 @@
 import {Page, NavController, NavParams, Platform} from 'ionic-angular';
 import {Storage, LocalStorage, Events} from 'ionic-angular';
-import {UserData, UserInfo} from '../../../services/user-data';
+import {UserData, UserInfo} from '../../../providers/user-data';
 import { AngularFire } from 'angularfire2';
 
 // interface UserInfo {
