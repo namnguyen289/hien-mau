@@ -22,7 +22,6 @@ export class SignUpPage {
 
     this.email = this.authForm.controls['email'];
     this.password = this.authForm.controls['password'];
-    // this.email.value = "sadman289@gmail.com";
   }
 
   onSubmit(value: any): void {
@@ -35,7 +34,7 @@ export class SignUpPage {
         this.nav.setRoot(AccountPage,this.userData.authData);
       }).catch(e => {
         this.error = e;
-        console.error(`Create User Failure:`, e.message);
+        console.error(`Create User Failure:`, e);
       });
     }
   }

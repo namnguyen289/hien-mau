@@ -21,12 +21,12 @@
 
 
 <ion-content class="outer-content">
-    <div class="avatar">
-        <img id="avatarImg" [src]="userInfo.avatarImg">
-        <b>{{userInfo.displayName}}</b>
-    </div>
     <div [ngSwitch]="accountSeg">
         <ion-list *ngSwitchCase="'infor'">
+            <div class="avatar">
+                <img id="avatarImg" [src]="userInfo.avatarImg">
+                <b>{{userInfo.displayName}}</b>
+            </div>
             <ion-item>
                 <ion-label floating>Name</ion-label>
                 <ion-input [(ngModel)]="userInfo.displayName" type="text"></ion-input>

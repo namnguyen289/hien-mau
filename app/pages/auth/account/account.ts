@@ -66,7 +66,7 @@ export class AccountPage {
             }
             // console.log(this.userInfo);
             this.events.publish('event:HideLoading');
-        });
+        },e=>console.log(e));
 
     }
     ionViewLoaded() {

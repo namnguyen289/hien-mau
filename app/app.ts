@@ -1,6 +1,6 @@
 //import Plugin
 import {Component, ViewChild, enableProdMode} from '@angular/core';
-import {Platform, ionicBootstrap, Nav, MenuController, Events, Loading} from 'ionic-angular';
+import {Platform, ionicBootstrap, Nav, MenuController, Events} from 'ionic-angular';
 import {StatusBar, Splashscreen} from 'ionic-native';
 import {FIREBASE_PROVIDERS, defaultFirebase, AngularFire, firebaseAuthConfig, AuthProviders, AuthMethods} from 'angularfire2';
 //import providers
@@ -8,6 +8,7 @@ import {ConnectivityService} from './providers/connectivity-service/connectivity
 import {UserData} from './providers/user-data';
 import {LocationData} from './providers/location-data';
 import {AppData} from './providers/app-data';
+import {LoadingModal} from './components/loading-modal/loading-modal';
 //import pages
 import {HomePage} from './pages/home/home';
 import {AccountPage} from './pages/auth/account/account';
@@ -15,21 +16,22 @@ import {SignUpPage} from './pages/auth/sign-up/sign-up';
 
 
 @Component({
-  templateUrl: 'build/app.html'
+  templateUrl: 'build/app.html',
+  directives: [LoadingModal]
 })
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
-
+  @ViewChild('loading') loading: LoadingModal;
 
   rootPage: any = HomePage;
-  loading: Loading;
+  // loading: Loading;
 
   constructor(private events: Events, platform: Platform, private userData: UserData, private appData: AppData, private menu: MenuController
   ) {
     // Splashscreen.show();
     platform.ready().then(() => {
       StatusBar.styleDefault();
-      // console.log(userData.hasLogined);   
+      // console.log(userData.hasLogined);
       this.listenToEvents();
     });
   }
@@ -86,11 +88,12 @@ export class MyApp {
       message = options[0];
     }
     try {
+      this.loading.show();
       //to-do will fix in beta 11
-      this.loading = Loading.create({
-        content: message, dismissOnPageChange: true
-      });
-      this.nav.present(this.loading).catch(e => { console.log(e) });
+      // this.loading = Loading.create({
+      //   content: message, dismissOnPageChange: true
+      // });
+      // this.nav.present(this.loading).catch(e => { console.log(e) });
     } catch (e) {
       console.log(e);
     };
@@ -98,7 +101,7 @@ export class MyApp {
 
   hideLoading() {
     try {
-      this.loading.dismiss();
+      this.loading.hide();
     } catch (e) {
       console.log(e);
       // this.loading.dismiss();
