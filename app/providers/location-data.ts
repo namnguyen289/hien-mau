@@ -16,8 +16,8 @@ export class LocationData {
 
 
     }
-    getCurrentPosition(_callBack) {
-        Geolocation.getCurrentPosition().then((resp) => {
+    getCurrentPosition(_callBack,locationOptions?) {
+        Geolocation.getCurrentPosition(locationOptions).then((resp) => {
             //resp.coords.latitude
             //resp.coords.longitude            
             // console.log(resp.coords.latitude + '   ' + resp.coords.longitude);
