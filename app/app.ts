@@ -109,6 +109,7 @@ export class MyApp {
   }
 }
 
+
 ionicBootstrap(MyApp, [
   FIREBASE_PROVIDERS,
   // Initialize Firebase app  

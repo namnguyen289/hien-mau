@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Storage, LocalStorage, Events} from 'ionic-angular';
-import {AngularFire, AuthProviders, AuthMethods, FirebaseObjectObservable,FirebaseAuthState } from 'angularfire2';
+import {AngularFire, AuthProviders, AuthMethods, FirebaseObjectObservable, FirebaseAuthState } from 'angularfire2';
 import {LocationData} from './location-data';
 
 export declare class UserInfo {
@@ -14,6 +14,8 @@ export declare class UserInfo {
     rh: string;
     gender: string;
     birthday: any;
+    crlongitude: any;
+    crlatitude: any;
 }
 
 @Injectable()
@@ -38,7 +40,9 @@ export class UserData {
         bloodType: 'O',
         rh: 'Rh',
         gender: 'm',
-        birthday: '1988-08-29'
+        birthday: '1988-08-29',
+        crlatitude: '10.7975447',
+        crlongitude: '106.6468263'
     }
 
     constructor(
@@ -109,30 +113,34 @@ export class UserData {
         this.authData = authData;
         this.hasLogined = true;
 
-        var obj: any = {
-            "provider": authData.auth.providerData[0].providerId,
-            "email": authData.auth.email || "MISSING",
-            "displayName": authData.auth.providerData[0].displayName || authData.auth.email,
-        };
-        if (authData.auth.providerData[0].providerId != AuthMethods.Password) {
-            obj.avatarImg = authData.auth.photoURL || this.AVATAR_DEFAULT;
-        }
-        const itemObservable = this.af.database.object('/users/' + authData.uid);
-        itemObservable.update(obj);
-        this.locTracking(authData.uid);
-        this.events.publish('user:login');
+        this.locationData.getCurrentPosition(data => {
+            var obj: any = {
+                "provider": authData.auth.providerData[0].providerId,
+                "email": authData.auth.email || "MISSING",
+                "displayName": authData.auth.providerData[0].displayName || authData.auth.email,
+                "crlatitude": data.latitude,
+                "crlongitude": data.longitude
+            };
+            if (authData.auth.providerData[0].providerId != AuthMethods.Password) {
+                obj.avatarImg = authData.auth.photoURL || this.AVATAR_DEFAULT;
+            }
+            const itemObservable = this.af.database.object('/users/' + authData.uid);
+            itemObservable.update(obj);
+            this.locTracking(authData.uid);
+            this.events.publish('user:login');
+        });
     }
 
     /**
      * this create in the user using the form credentials. 
      */
-    registerUser(_credentials):Promise<FirebaseAuthState> {
-       return this.af.auth.createUser(_credentials);
-            // .then((user) => {
-            //     console.log(`Create User Success:`, user);
-            //     _credentials.created = true;
-            // })
-            // .catch(e => console.error(`Create User Failure:`, e));
+    registerUser(_credentials): Promise<FirebaseAuthState> {
+        return this.af.auth.createUser(_credentials);
+        // .then((user) => {
+        //     console.log(`Create User Success:`, user);
+        //     _credentials.created = true;
+        // })
+        // .catch(e => console.error(`Create User Failure:`, e));
     }
 
     updateUserInfo(_userInfor: UserInfo, _callback?) {
@@ -173,5 +181,38 @@ export class UserData {
      */
     getDefaultUserInfo(): UserInfo {
         return JSON.parse(JSON.stringify(this.defaultUserInfo));
+    }
+
+    /**
+     * Get list user 
+     */
+    getListUser(callBack, par?: Object) {
+        let result: Array<UserInfo> = new Array<UserInfo>();
+        const lstUser = this.af.database.list('/users/', par).subscribe(data => {
+            if (data) {
+                console.log(data);
+                data.forEach(obj => {
+                    result.push(this.obj2UserInfo(obj));
+                });
+                callBack(result);
+            }
+        });
+    }
+    obj2UserInfo(obj: any): UserInfo {
+        let user: UserInfo = {
+            uid: obj.$key,
+            address: obj.address,
+            avatarImg: obj.avatarImg,
+            birthday: obj.birthday,
+            bloodType: obj.bloodType,
+            displayName: obj.displayName,
+            email: obj.email,
+            gender: obj.gender,
+            phone: obj.phone,
+            rh: obj.rh,
+            crlatitude:obj.crlatitude,
+            crlongitude:obj.crlongitude
+        }
+        return user;
     }
 }

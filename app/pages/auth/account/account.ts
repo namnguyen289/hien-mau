@@ -38,7 +38,9 @@ export class AccountPage {
         bloodType: 'O',
         rh: 'Rh',
         gender: 'm',
-        birthday: '1988-08-29'
+        birthday: '1988-08-29',
+        crlatitude:'10.7975447',
+        crlongitude:'106.6468263'
     };
 
     constructor(private events: Events, public userData: UserData, navParams: NavParams, platform: Platform, af: AngularFire) {

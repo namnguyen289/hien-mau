@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {ConnectivityService} from '../../providers/connectivity-service/connectivity-service';
 import {LocationData} from '../../providers/location-data';
+import {UserData, UserInfo} from '../../providers/user-data';
 
 @Component({
     templateUrl: 'build/pages/map/map.html',
@@ -12,7 +13,9 @@ export class MapPage {
     mapInitialised: boolean = false;
     apiKey: any = "AIzaSyBGqdHqg2C_x-1llpBPJmLaxzvZOsevWeU";//AIzaSyAh2Lz13gecn31S3llMPJdGDqREt1E4Gh4";
 
-    constructor(private nav: NavController, private connectivity: ConnectivityService, private locData:LocationData) {
+    markers: Array<any> = [];
+
+    constructor(private nav: NavController, public userData: UserData, private connectivity: ConnectivityService, private locData: LocationData) {
         this.loadGoogleMaps();
     }
 
@@ -67,9 +70,9 @@ export class MapPage {
 
         this.mapInitialised = true;
         let locationOptions = { timeout: 10000000000, enableHighAccuracy: true };
-        this.locData.getCurrentPosition((position)=>{
+        this.locData.getCurrentPosition((position) => {
             console.log(position);
-        },locationOptions);
+        }, locationOptions);
         navigator.geolocation.getCurrentPosition((position) => {
             let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             console.log(position);
@@ -89,7 +92,7 @@ export class MapPage {
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             }
             this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-        },locationOptions);
+        }, locationOptions);
 
     }
 
@@ -127,4 +130,55 @@ export class MapPage {
 
     }
 
+    addMarker() {
+        this.userData.getListUser(data => {
+            data.forEach(element => {
+                if (element.crlatitude && element.crlongitude) {
+                    let crloc: any = { lat: element.crlatitude * 1, lng: element.crlongitude * 1 };
+                    let marker = new google.maps.Marker({
+                        map: this.map,
+                        animation: google.maps.Animation.DROP,
+                        position: crloc
+                    });
+
+                    let content = "<h4>" + element.displayName + "</h4><br/>" +
+                        "Nhóm Máu: " + element.bloodType + "" + element.rh;
+
+                    this.addInfoWindow(marker, content);
+                    this.updateMarker(marker, element);
+                }
+            });
+        });
+        // let marker = new google.maps.Marker({
+        //     map: this.map,
+        //     animation: google.maps.Animation.DROP,
+        //     position: this.map.getCenter()
+        // });
+
+        // let content = "<h4>Information!</h4>";
+
+        // this.addInfoWindow(marker, content);
+    }
+    addInfoWindow(marker, content) {
+
+        let infoWindow = new google.maps.InfoWindow({
+            content: content
+        });
+
+        google.maps.event.addListener(marker, 'click', function () {
+            infoWindow.open(this.map, marker);
+        });
+    }
+    updateMarker(marker: any, element: any) {
+        let isExisted: boolean = false;
+        this.markers.forEach(val => {
+            if (val.uid == element.uid) {
+                isExisted = true;
+                val.item = marker;
+            }
+        });
+        if (!isExisted) {
+            this.markers.push({ uid: element.uid, item: marker });
+        }
+    }
 }
