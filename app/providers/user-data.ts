@@ -190,7 +190,7 @@ export class UserData {
         let result: Array<UserInfo> = new Array<UserInfo>();
         const lstUser = this.af.database.list('/users/', par).subscribe(data => {
             if (data) {
-                console.log(data);
+                // console.log(data);
                 data.forEach(obj => {
                     result.push(this.obj2UserInfo(obj));
                 });

@@ -69,10 +69,7 @@ export class MapPage {
     initMap() {
 
         this.mapInitialised = true;
-        let locationOptions = { timeout: 10000000000, enableHighAccuracy: true };
-        this.locData.getCurrentPosition((position) => {
-            console.log(position);
-        }, locationOptions);
+        let locationOptions = { timeout: 10000, enableHighAccuracy: true };
         navigator.geolocation.getCurrentPosition((position) => {
             let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             console.log(position);
@@ -83,6 +80,18 @@ export class MapPage {
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             }
             this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            let marker = new google.maps.Marker({
+                map: this.map,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 10
+                },
+                animation: google.maps.Animation.DROP,
+                position: latLng
+            });
+            let content = "<h6>Your current location</h6>";
+
+            this.addInfoWindow(marker, content);
         }, (error) => {
             console.log("this is error", error);
 
@@ -132,6 +141,7 @@ export class MapPage {
 
     addMarker() {
         this.userData.getListUser(data => {
+            this.clearMarkers();
             data.forEach(element => {
                 if (element.crlatitude && element.crlongitude) {
                     let crloc: any = { lat: element.crlatitude * 1, lng: element.crlongitude * 1 };
@@ -140,12 +150,14 @@ export class MapPage {
                         animation: google.maps.Animation.DROP,
                         position: crloc
                     });
-
-                    let content = "<h4>" + element.displayName + "</h4><br/>" +
-                        "Nhóm Máu: " + element.bloodType + "" + element.rh;
+                    console.log(crloc);
+                    let content = "<div id='" + element.uid + "'> <h6>" + element.displayName + "</h6>" +
+                        "Nhóm Máu: " + element.bloodType + "" + element.rh + "</div>";
 
                     this.addInfoWindow(marker, content);
                     this.updateMarker(marker, element);
+                    console.log(this.markers);
+
                 }
             });
         });
@@ -174,11 +186,19 @@ export class MapPage {
         this.markers.forEach(val => {
             if (val.uid == element.uid) {
                 isExisted = true;
+                val.item.setMap(null);
                 val.item = marker;
             }
         });
         if (!isExisted) {
             this.markers.push({ uid: element.uid, item: marker });
         }
+    }
+
+    clearMarkers() {
+        this.markers.forEach(val => {
+            val.item.setMap(null);
+        });
+        this.markers = [];
     }
 }
